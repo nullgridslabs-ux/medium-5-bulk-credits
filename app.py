@@ -7,6 +7,16 @@ FLAG = os.environ.get("FLAG","CTF{dev}")
 
 credits = {}
 
+@app.route("/")
+def index():
+    return """
+<h2>Referral Credits Platform</h2>
+<ul>
+<li>POST /referral</li>
+<li>GET /health</li>
+</ul>
+"""
+
 @app.route("/health")
 def health():
     return "ok"
@@ -16,7 +26,6 @@ def referral():
     user = request.json["user"]
     invited = request.json["invited"]
 
-    # BUG: no self / multi-account protection
     credits[user] = credits.get(user,0)+100
 
     if credits[user] >= 1000:
@@ -25,4 +34,5 @@ def referral():
     return jsonify({"credits":credits[user]})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
